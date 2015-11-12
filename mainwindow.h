@@ -29,15 +29,13 @@
 #include <time.h>
 #include <cstdlib>
 #include <iostream>
+
 using namespace std;
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
-
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow{
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -50,8 +48,12 @@ private:
     QCheckBox fileOfPopulation;
     QPushButton okButton, closeButton, other;
     QGridLayout layout;
-    QLineEdit kol_osob, kol_genov, kol_pokoleniy, p_mutation_down, p_mutation_up, koeff_e, stop_e;
-    QLabel file, kol_osob_l, kol_genov_l, kol_pokoleniy_l, p_mutation_down_l, p_mutation_down_l_1, p_mutation_up_l, koeff_l, stop_l;
+    QLineEdit kol_osob, kol_genov, kol_pokoleniy, p_mutation_down, p_mutation_up, koeff_e, stop_e, crossover_flat_down, crossover_simple_down,
+              crossover_digital_down, crossover_flat_up, crossover_simple_up,
+    crossover_digital_up, epsilon;
+    QLabel file, kol_osob_l, kol_genov_l, kol_pokoleniy_l, p_mutation_down_l, p_mutation_down_l_1, p_mutation_up_l,
+            koeff_l, stop_l, crossover_flat_l, crossover_simple_l,
+            crossover_digital_l, crossover_l, epsilon_l;
 private slots:
      void newFile(void);
      void start();

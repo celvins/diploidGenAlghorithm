@@ -18,7 +18,6 @@
 */
 #ifndef EVOLUTION_H
 #define EVOLUTION_H
-
 #include "population.h"
 #include "test.h"
 #include "algorithm.h"
@@ -27,32 +26,23 @@
 #include <thread>
 
 class evolution{
-
 private:
-
     population * object_population;
     double * roulette;
     double * fitness;
-    double roulette_sum;
-    int P_MUTATION_UP;
-    int P_MUTATION_DOWN;
-    double koef, minimum;
-    double stop_min;
-
-
+    double roulette_sum, koef, minimum, stop_min, epsi;
+    int P_MUTATION_UP, P_MUTATION_DOWN, p_cross_dig_down, p_cross_flat_down, p_cross_simple_down,
+        p_cross_dig_up, p_cross_flat_up, p_cross_simple_up;
 public:
     thread * ths;
     evolution();
-    evolution(int, int, int, int, double, double);
+    evolution(int, int, int, int, double, double, int, int, int, int, int, int, double);
     void create_roulette(bool);
     int choice_parent(double);
-    void krossover();
+    void crossover();
     void mutation(double *);
     void genocid();
     void best_fitness(int);
-
-
     ~evolution();
 };
-
 #endif // EVOLUTION_H
