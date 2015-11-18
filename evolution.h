@@ -23,7 +23,6 @@
 #include "algorithm.h"
 #include <time.h>
 #include <QMessageBox>
-#include <thread>
 
 class evolution{
 private:
@@ -34,7 +33,6 @@ private:
     int P_MUTATION_UP, P_MUTATION_DOWN, p_cross_dig_down, p_cross_flat_down, p_cross_simple_down,
         p_cross_dig_up, p_cross_flat_up, p_cross_simple_up;
 public:
-    thread * ths;
     evolution();
     evolution(int, int, int, int, double, double, int, int, int, int, int, int, double);
     void create_roulette(bool);

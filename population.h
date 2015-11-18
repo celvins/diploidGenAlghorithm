@@ -1,4 +1,3 @@
-
 #ifndef POPULATION_H
 #define POPULATION_H
 
@@ -6,9 +5,6 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
-#include <math.h>
-#include <time.h>
-
 using namespace std;
 /**
    * \brief Класс Individual представляет собой три склееных вектора best_parent, bed_parent, genotype;

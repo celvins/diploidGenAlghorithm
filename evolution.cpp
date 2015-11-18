@@ -38,6 +38,7 @@ void evolution::create_roulette(bool save_population_in_file){
         if(isnan(fitness[i]))
             throw algorithm::errors((char *)"fitness ", fitness[i]);
         roulette_sum += 1 / (fitness[i]+koef);
+        delete []ptr;
     }
         roulette[0] = 1 / (fitness[0]+koef);
         for(int i = 1; i < object_population->get_kol_osob(); i++)
@@ -48,16 +49,14 @@ int evolution::choice_parent(double x){
         if (x < roulette[i])
            return i;
     }
-//    cout << "error_choice_parent" << endl << endl;
+    cout << "error_choice_parent" << endl << endl;
     return 0;
 }
-
 void evolution::crossover(){
-    for(int g = 0; g < object_population->get_kol_osob(); g ++){
+    for(int g = 0; g < object_population->get_kol_osob(); g++){
         double x_dad, x_mom;
-        x_dad = roulette_sum + rand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
-        x_mom = roulette_sum + rand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
-
+        x_dad = roulette_sum + qrand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
+        x_mom = roulette_sum + qrand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
         int dad = choice_parent(x_dad), mom = choice_parent(x_mom);
         double parents[4][object_population->get_kol_genov()], child[4][object_population->get_kol_genov()];
         for(int b = 0; b < object_population->get_kol_genov(); b++){
@@ -65,10 +64,9 @@ void evolution::crossover(){
             parents[1][b] = object_population->get_osob(dad, b, false);
             parents[2][b] = object_population->get_osob(mom, b, true);
             parents[3][b] = object_population->get_osob(mom, b, false);
-
         }
         int crossover_variant = 0;
-        int p_crossover = rand() % 100;
+        int p_crossover = qrand() % 100;
         if (p_crossover >= p_cross_flat_down && p_crossover <= p_cross_flat_up)
             crossover_variant = 0;
         if (p_crossover >= p_cross_dig_down && p_crossover <= p_cross_dig_up)
@@ -81,12 +79,12 @@ void evolution::crossover(){
             for(int i = 0; i < 4; i+=2){
                 for(int b = 0; b < object_population->get_kol_genov(); b++){
                     if(parents[i][b] < parents[i + 1][b]){
-                        child[i][b] = (parents[i + 1][b] + rand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
-                        child[i + 1][b] = (parents[i + 1][b] + rand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
+                        child[i][b] = (parents[i + 1][b] + qrand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
+                        child[i + 1][b] = (parents[i + 1][b] + qrand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
                     }
                     else{
-                        child[i][b] = (parents[i][b] + rand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
-                        child[i + 1][b] = (parents[i][b] + rand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
+                        child[i][b] = (parents[i][b] + qrand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
+                        child[i + 1][b] = (parents[i][b] + qrand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
                     }
                     if(parents[i][b] == parents[i + 1][b]){
                         child[i][b] = parents[i][b];
@@ -99,7 +97,7 @@ void evolution::crossover(){
             //Digital crossover
             for(int i = 0; i < 4; i+=2){
                 for(int b = 0; b < object_population->get_kol_genov(); b++){
-                    int rnd = rand() % 2;
+                    int rnd = qrand() % 2;
                     if(rnd == 0){
                         child[i][b] = parents[i][b];
                         child[i + 1][b] = parents[i + 1][b];
@@ -113,7 +111,7 @@ void evolution::crossover(){
             break;
         case 2:
             //Simple сrossover
-            int i = rand() % (object_population->get_kol_genov());
+            int i = qrand() % (object_population->get_kol_genov());
             for(int b = 0; b < object_population->get_kol_genov(); b++){
                 if(b < i){
                     child[0][b] = parents[0][b];
@@ -158,13 +156,12 @@ void evolution::crossover(){
             object_population->set_osob(child[i_best2], i_worst, true);
             object_population->set_osob(child[i_best1], i_worst, false);
         }
-
     }
     object_population->decoding_genes();
 }
 void evolution::mutation(double * popul){
     for(int b = 0; b < object_population->get_kol_genov(); b++){
-        int p_mutation = rand() % 100; //The probability of an individual gene mutation
+        int p_mutation = qrand() % 100; //The probability of an individual gene mutation
         if((p_mutation >= P_MUTATION_DOWN) && (p_mutation <= P_MUTATION_UP)){
             double a = (popul[b] - popul[b] * 0.20);
             double c = (popul[b] + popul[b] * 0.20);
@@ -220,8 +217,6 @@ void evolution::genocid(){
     int i = 0;
     while(i < object_population->get_kol_osob()){
         for(int k = 0; k < object_population->get_kol_osob(); k++){
-//            if(k == i)
-//                continue;
             double sum = 0;
             for(int j = 0; j < object_population->get_kol_genov(); j++){
                 double a = object_population->get_osob(i, j);

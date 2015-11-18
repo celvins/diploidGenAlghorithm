@@ -24,11 +24,11 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QListWidget>
-#include <math.h>
+#include <qmath.h>
 #include <fstream>
 #include <time.h>
 #include <cstdlib>
-#include <iostream>
+#include <fstream>
 
 using namespace std;
 namespace Ui {

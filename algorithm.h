@@ -2,7 +2,7 @@
  * \author Vardanyan Andranik Eduardovich
  * \date 15.10.2015
  * \brief Запускает геннетический алгоритм.
- *  \param [in] number_generation число поколений. Задается пользователем.
+ * \param [in] number_generation число поколений. Задается пользователем.
  *
  *
 */
@@ -11,7 +11,6 @@
 #include "population.h"
 #include "evolution.h"
 #include <QMessageBox>
-#include <QThread>
 
 class algorithm{
 private:

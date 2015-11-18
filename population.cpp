@@ -48,8 +48,6 @@ void Individual::decoding_genes(bool first){
             continue;
         }
         if(!flag1 && !flag2){
-//            genotype[j] = best_parent[j];
-//            continue;
             if(bed_parent[j] < domination[j][0])
                 length1 = domination[j][0] - bed_parent[j];
             else
@@ -70,9 +68,10 @@ void Individual::decoding_genes(bool first){
     }
 }
 void Individual::set_individuals(double ** border){
+    qsrand(time(NULL));
     for(int j = 0; j < kol_genov; j++){
-        best_parent[j] = border[j][0] * pow(10,border[j][1]) + rand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
-        bed_parent[j] = border[j][0] * pow(10,border[j][1]) + rand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
+        best_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
+        bed_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
     }
 }
 void Individual::set_zigota(double * zigota, bool flag){
@@ -157,7 +156,6 @@ void population::generating_new_population(int k){
             border_file >> border[i][j];
     border_file.close();
     individual[k]->set_individuals(border);
-    individual[k]->decoding_genes(true);
     delete []border;
     for(int i = 0; i < kol_genov; i++){
         delete []border[i];

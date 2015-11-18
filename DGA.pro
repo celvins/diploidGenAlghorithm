@@ -12,7 +12,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = DGA
 TEMPLATE = app
 CONFIG += c++11
-#CONFIG += thread
 QMAKE_CXXFLAGS +=-fopenmp
 LIBS +=-lgomp
 
