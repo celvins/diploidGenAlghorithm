@@ -10,7 +10,7 @@ double fun(double * x, int kol){
 //    for(int i = 0; i < kol; i++){
 //        result += (x[i] * sin(pow(fabs(x[i]), 0.5)));
 //    }
-//    result = -result * 0.167;
+//    result = -result * 0.16667;
 //    std::cout << result <<std::endl;
     return result;
 }

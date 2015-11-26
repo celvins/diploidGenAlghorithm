@@ -3,9 +3,12 @@ evolution::evolution(){
     roulette = new double[object_population->get_kol_osob()];
     fitness = new double[object_population->get_kol_osob()];
 }
-evolution::evolution(int p_mutation_down, int p_mutation_up, int kolGen, int kolOsob, double koeff, double stop,
-                     int p_cross_dig_down, int p_cross_flat_down, int p_cross_simple_down,
-                     int p_cross_dig_up, int p_cross_flat_up, int p_cross_simple_up, double epsi){
+evolution::evolution(int p_mutation_down, int p_mutation_up,
+                     int kolGen, int kolOsob, double koeff, double stop,
+                     int p_cross_dig_down, int p_cross_flat_down,
+                     int p_cross_simple_down,
+                     int p_cross_dig_up, int p_cross_flat_up,
+                     int p_cross_simple_up, double epsi){
     object_population = new population(kolOsob, kolGen);
     this->koef = koeff;
     this->stop_min = stop;
@@ -58,7 +61,8 @@ void evolution::crossover(){
         x_dad = roulette_sum + qrand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
         x_mom = roulette_sum + qrand() * (roulette[0]-roulette_sum ) /(double)RAND_MAX;
         int dad = choice_parent(x_dad), mom = choice_parent(x_mom);
-        double parents[4][object_population->get_kol_genov()], child[4][object_population->get_kol_genov()];
+        double parents[4][object_population->get_kol_genov()],
+               child[4][object_population->get_kol_genov()];
         for(int b = 0; b < object_population->get_kol_genov(); b++){
             parents[0][b] = object_population->get_osob(dad, b, true);
             parents[1][b] = object_population->get_osob(dad, b, false);
@@ -163,8 +167,8 @@ void evolution::mutation(double * popul){
     for(int b = 0; b < object_population->get_kol_genov(); b++){
         int p_mutation = qrand() % 100; //The probability of an individual gene mutation
         if((p_mutation >= P_MUTATION_DOWN) && (p_mutation <= P_MUTATION_UP)){
-            double a = (popul[b] - popul[b] * 0.20);
-            double c = (popul[b] + popul[b] * 0.20);
+            double a = (popul[b] - popul[b] * 0.25);
+            double c = (popul[b] + popul[b] * 0.25);
             if(a < c){
                 popul[b] = a + rand() * (c - a) / (double)RAND_MAX;
             }

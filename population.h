@@ -40,6 +40,7 @@ private:
     vector<Individual*> individual;
     int kol_osob;
     int kol_genov;
+    double ** border;
 public:
     population();
     population(int , int);

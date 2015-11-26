@@ -6,7 +6,7 @@ Individual::Individual(){
 }
 Individual::Individual(int kol_genov, double ** dom){
     this->kol_genov = kol_genov;
-    domination = dom;
+    this->domination = dom;
     best_parent = new double[kol_genov];
     bed_parent = new double[kol_genov];
     genotype = new double[kol_genov];
@@ -105,6 +105,16 @@ population::population(){
 population::population(int kol_osob, int kol_genov){
     this->kol_osob = kol_osob;
     this->kol_genov = kol_genov;
+    ifstream border_file("border.txt", ios::in); //file for reading borders genes
+    if (border_file.fail())
+       throw algorithm::errors((char *)"read of border.txt", -1);
+    border = new double*[kol_genov];
+    for(int i = 0; i < kol_genov; i++)
+        border[i] = new double[4];
+    for(int i = 0; i < kol_genov; i++)
+        for(int j = 0; j < 4; j++)
+            border_file >> border[i][j];
+    border_file.close();
     ifstream border_domination("border_domination.txt", ios::in); //file for reading borders domination
     if (border_domination.fail())
        throw algorithm::errors((char *)"read of border_domination.txt", -1);
@@ -125,41 +135,13 @@ population::population(int kol_osob, int kol_genov){
     }
 }
 void population::generating_first_popualtion(){
-    ifstream border_file("border.txt", ios::in); //file for reading borders genes
-    if (border_file.fail())
-       throw algorithm::errors((char *)"read of border.txt", -1);
-    double ** border = new double*[kol_genov];
-    for(int i = 0; i < kol_genov; i++)
-        border[i] = new double[4];
-    for(int i = 0; i < kol_genov; i++)
-        for(int j = 0; j < 4; j++)
-            border_file >> border[i][j];
-    border_file.close();
     for(int i = 0; i < kol_osob; i++){
          individual[i]->set_individuals(border);
          individual[i]->decoding_genes(true);
     }
-    delete []border;
-    for(int i = 0; i < kol_genov; i++){
-        delete []border[i];
-    }
 }
 void population::generating_new_population(int k){
-    ifstream border_file("border.txt", ios::in); //file for reading borders genes
-    if (border_file.fail())
-       throw algorithm::errors((char *)"read of border.txt", -1);
-    double ** border = new double*[kol_genov];
-    for(int i = 0; i < kol_genov; i++)
-        border[i] = new double[4];
-    for(int i = 0; i < kol_genov; i++)
-        for(int j = 0; j < 4; j++)
-            border_file >> border[i][j];
-    border_file.close();
     individual[k]->set_individuals(border);
-    delete []border;
-    for(int i = 0; i < kol_genov; i++){
-        delete []border[i];
-    }
 }
 void population::decoding_genes(){
     for(int i = 0; i < kol_osob; i++){
@@ -167,11 +149,10 @@ void population::decoding_genes(){
     }
 }
 void population::decoding_genes(int i){
-    individual[i]->decoding_genes(false);
+    individual[i]->decoding_genes(true);
 }
 double * population::get_osob(int i){
     return individual[i]->get_individual_genotype();
-
 }
 double  population::get_osob(int i, int j){
     return individual[i]->get_individual_gen(j);
@@ -192,4 +173,8 @@ population::~population(){
     for(int i = 0; i < kol_osob; i++)
         delete individual[i];
     delete objIndividual;
+    delete []border;
+    for(int i = 0; i < kol_genov; i++){
+        delete []border[i];
+    }
 }
