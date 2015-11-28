@@ -68,7 +68,7 @@ void Individual::decoding_genes(bool first){
     }
 }
 void Individual::set_individuals(double ** border){
-    qsrand(time(NULL));
+//    qsrand(time(NULL));
     for(int j = 0; j < kol_genov; j++){
         best_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
         bed_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
