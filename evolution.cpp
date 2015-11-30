@@ -193,6 +193,7 @@ void evolution::best_fitness(int j){
            if(fitness[i] < min){
                min = fitness[i];
                i_min = i;
+               end = clock();
            }
     }
     if(j == 0)

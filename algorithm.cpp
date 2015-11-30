@@ -43,7 +43,6 @@ void algorithm::start_evolution(int kolGen, int kolOsob, int p_mut_down,
         object_evolution.best_fitness(i);
     }
 //    double  end = clock();
-    object_evolution.end = clock();
     cout << " time " << object_evolution.end - object_evolution.start;
     QMessageBox msgBox;
     msgBox.setText("End of calculations");
