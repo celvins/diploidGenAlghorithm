@@ -44,6 +44,7 @@ private:
 public:
     population();
     population(int , int);
+    void limited_border();
     void generating_new_population(int);
     void generating_first_popualtion();
     void decoding_genes();

@@ -100,7 +100,7 @@ void evolution::crossover(){
             }
             break;
         case 1:
-            //Digital crossover
+            //Discrete crossover
             for(int i = 0; i < 4; i+=2){
                 for(int b = 0; b < object_population->get_kol_genov(); b++){
                     int rnd = qrand() % 2;
@@ -126,7 +126,6 @@ void evolution::crossover(){
                     child[3][b] = parents[3][b];
                 }
                 else{
-
                     child[1][b] = parents[0][b];
                     child[0][b] = parents[1][b];
                     child[3][b] = parents[2][b];
@@ -164,6 +163,9 @@ void evolution::crossover(){
         }
     }
     object_population->decoding_genes();
+    object_population->limited_border();
+
+
 }
 void evolution::mutation(double * popul){
     for(int b = 0; b < object_population->get_kol_genov(); b++){

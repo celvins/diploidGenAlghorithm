@@ -94,14 +94,14 @@ double Individual::get_individual_gen(int j, bool flag){
     else
         return bed_parent[j];
 }
+
 Individual::~Individual(){
     delete []bed_parent;
     delete []best_parent;
     delete []genotype;
 }
-population::population(){
+population::population(){}
 
-}
 population::population(int kol_osob, int kol_genov){
     this->kol_osob = kol_osob;
     this->kol_genov = kol_genov;
@@ -169,6 +169,17 @@ int population::get_kol_genov(){
 void population::set_osob(double * individual, int i, bool flag){
     this->individual[i]->set_zigota(individual, flag);
 }
+void population::limited_border(){
+    for(int i = 0; i < kol_osob; i++){
+        for(int j = 0; j < kol_genov; j++){
+            if(get_osob(i, j) < border[j][0] * pow(10,border[j][1]) || get_osob(i, j) > border[j][2] * pow(10,border[j][3])){
+                individual[i]->set_individuals(border);
+                continue;
+            }
+        }
+    }
+    decoding_genes();
+}
 population::~population(){
     for(int i = 0; i < kol_osob; i++)
         delete individual[i];
@@ -178,3 +189,4 @@ population::~population(){
         delete []border[i];
     }
 }
+

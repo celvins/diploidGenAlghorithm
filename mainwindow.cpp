@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     stop_l.setText(tr("Sample Output"));
     stop_e.setText(tr("1e-2"));
     kol_pokoleniy_l.setText(tr("Number of generations:"));
-    kol_pokoleniy.setText(tr("20000"));
+    kol_pokoleniy.setText(tr("10000"));
     p_mutation_down_l.setText(tr("The probability of mutations in the genes(%)"));
     p_mutation_down_l_1.setText(tr("From:"));
     p_mutation_down.setText(tr("0"));
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     crossover_simple_down.setText(tr("0"));
     crossover_simple_up.setText(tr("10"));
     epsilon_l.setText(tr("Epsilon"));
-    epsilon.setText(tr("0.6"));
+    epsilon.setText(tr("15"));
     layout.addWidget(&kol_osob_l,0,0);
     layout.addWidget(&kol_osob,0,1);
     layout.addWidget(&koeff_l,0,2);
