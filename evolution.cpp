@@ -9,6 +9,8 @@ evolution::evolution(int p_mutation_down, int p_mutation_up,
                      int p_cross_simple_down,
                      int p_cross_dig_up, int p_cross_flat_up,
                      int p_cross_simple_up, double epsi){
+    start = clock();
+    end = 0;
     object_population = new population(kolOsob, kolGen);
     this->koef = koeff;
     this->stop_min = stop;
@@ -211,6 +213,8 @@ void evolution::best_fitness(int j){
     }
 
     if( fitness[i_min] < stop_min){
+        end = clock();
+        cout << " time " << end - start << endl;
         QMessageBox msg;
         msg.setText("End calculations");
         msg.exec();

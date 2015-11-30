@@ -5,6 +5,7 @@ Individual::Individual(){
 
 }
 Individual::Individual(int kol_genov, double ** dom){
+    qsrand(time(NULL));
     this->kol_genov = kol_genov;
     this->domination = dom;
     best_parent = new double[kol_genov];
@@ -68,7 +69,6 @@ void Individual::decoding_genes(bool first){
     }
 }
 void Individual::set_individuals(double ** border){
-//    qsrand(time(NULL));
     for(int j = 0; j < kol_genov; j++){
         best_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
         bed_parent[j] = border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX;
