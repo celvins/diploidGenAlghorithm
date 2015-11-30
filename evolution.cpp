@@ -164,8 +164,6 @@ void evolution::crossover(){
     }
     object_population->decoding_genes();
     object_population->limited_border();
-
-
 }
 void evolution::mutation(double * popul){
     for(int b = 0; b < object_population->get_kol_genov(); b++){
@@ -214,7 +212,6 @@ void evolution::best_fitness(int j){
             file_best_all_generations << object_population->get_osob(i_min, i) << " ";
         file_best_all_generations.close();
     }
-
     if( fitness[i_min] < stop_min){
         end = clock();
         cout << " time " << end - start << endl;
@@ -223,14 +220,14 @@ void evolution::best_fitness(int j){
         msg.exec();
         throw algorithm::errors((char *)"End calculations ", fitness[i_min]);
     }
-    if(minimum > 10*stop_min){
+//    if(minimum > 10*stop_min){
         if(((j + 1) % (object_population->get_kol_osob()))  == 0)
             genocid();
-    }
-    else{
-        if(((j + 1) % (2 * object_population->get_kol_osob()))  == 0)
-            genocid();
-    }
+//    }
+//    else{
+//        if(((j + 1) % (2 * object_population->get_kol_osob()))  == 0)
+//            genocid();
+//    }
 }
 void evolution::genocid(){
     int i = 0;
