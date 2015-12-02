@@ -19,7 +19,7 @@ algorithm::algorithm(int kolGen, int kolOsob, int number_generation,
                          p_cross_simple_up, epsi);
     }
      catch (errors ix) {
-           cout << "ERROR\n" << ix.str << " " << ix.ix << endl;
+           cout << endl << ix.str << " " << ix.ix << endl;
      }
 }
 void algorithm::start_evolution(int kolGen, int kolOsob, int p_mut_down,
@@ -36,13 +36,12 @@ void algorithm::start_evolution(int kolGen, int kolOsob, int p_mut_down,
                                 p_cross_simple_down,
                                 p_cross_dig_up, p_cross_flat_up,
                                 p_cross_simple_up, epsi);
-//    double start = clock();
+    cout << "Start algorithm" << endl;
     for(int i = 0; i < number_generation; i++){
         object_evolution.create_roulette(flag);
         object_evolution.crossover();
         object_evolution.best_fitness(i);
     }
-//    double  end = clock();
     cout << " time " << object_evolution.end - object_evolution.start;
     QMessageBox msgBox;
     msgBox.setText("End of calculations");

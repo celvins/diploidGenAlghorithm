@@ -19,8 +19,10 @@ public:
     class errors{
     public:
         char * str;
-        long double ix;
+        double ix;
+        int y;
         errors(char er[100], const double x) {str = er; ix = x;}
+        errors(const double x, const int y){ix = x; this->y = y;}
     };
     algorithm();
     algorithm(int, int, int, int, int, bool, double, double, int, int, int, int, int, int, double);

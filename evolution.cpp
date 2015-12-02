@@ -54,7 +54,6 @@ int evolution::choice_parent(double x){
         if (x < roulette[i])
            return i;
     }
-//    cout << "error_choice_parent" << endl << endl;
     return 0;
 }
 void evolution::crossover(){
@@ -205,7 +204,6 @@ void evolution::best_fitness(int j){
     file_best_fitness.close();
     if(fitness[i_min] < minimum){
         minimum = fitness[i_min];
-        cout << minimum << endl;
         ofstream file_best_all_generations("best_all.txt");
         file_best_all_generations<< "Population № " << j + 1 << "\nBest of all fitness " << minimum << "\nBest individual\n";
         for(int i = 0; i < object_population->get_kol_genov(); i++)
@@ -214,20 +212,14 @@ void evolution::best_fitness(int j){
     }
     if( fitness[i_min] < stop_min){
         end = clock();
-        cout << " time " << end - start << endl;
+        cout << endl << "Time " << end - start << " \nGeneration " << j + 1;
         QMessageBox msg;
         msg.setText("End calculations");
         msg.exec();
         throw algorithm::errors((char *)"End calculations ", fitness[i_min]);
     }
-//    if(minimum > 10*stop_min){
-        if(((j + 1) % (object_population->get_kol_osob()))  == 0)
-            genocid();
-//    }
-//    else{
-//        if(((j + 1) % (2 * object_population->get_kol_osob()))  == 0)
-//            genocid();
-//    }
+    if(((j + 1) % (object_population->get_kol_osob()))  == 0)
+        genocid();
 }
 void evolution::genocid(){
     int i = 0;
