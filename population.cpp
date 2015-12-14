@@ -5,7 +5,7 @@ Individual::Individual(){
 
 }
 Individual::Individual(int kol_genov, double ** dom){
-    qsrand(time(NULL));
+    qsrand(random_device().operator ()());
     this->kol_genov = kol_genov;
     this->domination = dom;
     best_parent = new double[kol_genov];
@@ -21,7 +21,6 @@ void Individual::decoding_genes(bool first){
         if(this->bed_parent[j] >= domination[j][0] && bed_parent[j] <= domination[j][1])
             flag2 = true;
         if(first){
-            if((flag1 && flag2) || (!flag1 && !flag2) || (flag1 && !flag2) || (!flag1 && flag2)){
                 if(bed_parent[j] < domination[j][0])
                     length1 = domination[j][0] - bed_parent[j];
                 else
@@ -38,7 +37,6 @@ void Individual::decoding_genes(bool first){
                     genotype[j] = best_parent[j];
                     continue;
                 }
-            }
         }
         if(flag1){
            genotype[j] = best_parent[j];
@@ -49,22 +47,7 @@ void Individual::decoding_genes(bool first){
             continue;
         }
         if(!flag1 && !flag2){
-            if(bed_parent[j] < domination[j][0])
-                length1 = domination[j][0] - bed_parent[j];
-            else
-                length1 = bed_parent[j] - domination[j][1];
-            if(best_parent[j] < domination[j][0])
-                length2 = domination[j][0] - best_parent[j];
-            else
-                length2 = best_parent[j] - domination[j][1];
-            if(fabs(length1) < fabs(length2)){
-                genotype[j] = bed_parent[j];
-                continue;
-            }
-            else{
-                genotype[j] = best_parent[j];
-                continue;
-            }
+            genotype[j] = best_parent[j];
         }
     }
 }
@@ -126,8 +109,9 @@ population::population(int kol_osob, int kol_genov){
             border_domination >> domination[i][j];
     border_domination.close();
     for(int i = 0; i < kol_osob; i++){
+        individual.push_back(0);
         objIndividual = new Individual(kol_genov, domination);
-        individual.push_back(objIndividual);
+        individual[i] = objIndividual;
     }
     delete []domination;
     for(int i = 0; i < kol_genov; i++){
@@ -142,14 +126,12 @@ void population::generating_first_popualtion(){
 }
 void population::generating_new_population(int k){
     individual[k]->set_individuals(border);
+    individual[k]->decoding_genes(true);
 }
 void population::decoding_genes(){
     for(int i = 0; i < kol_osob; i++){
         individual[i]->decoding_genes(false);
     }
-}
-void population::decoding_genes(int i){
-    individual[i]->decoding_genes(true);
 }
 double * population::get_osob(int i){
     return individual[i]->get_individual_genotype();
@@ -170,15 +152,19 @@ void population::set_osob(double * individual, int i, bool flag){
     this->individual[i]->set_zigota(individual, flag);
 }
 void population::limited_border(){
+    bool flagi;
     for(int i = 0; i < kol_osob; i++){
+        flagi = false;
         for(int j = 0; j < kol_genov; j++){
             if(get_osob(i, j) < border[j][0] * pow(10,border[j][1]) || get_osob(i, j) > border[j][2] * pow(10,border[j][3])){
-                individual[i]->set_individuals(border);
-                continue;
+                flagi = true;
             }
         }
+        if(flagi){
+            individual[i]->set_individuals(border);
+            individual[i]->decoding_genes(true);
+        }
     }
-    decoding_genes();
 }
 population::~population(){
     for(int i = 0; i < kol_osob; i++)

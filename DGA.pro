@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-09-29T10:58:05
+# Project created by Vardanyan Andranik 2015-09-29T10:58:05
 #
 #-------------------------------------------------
 
@@ -29,6 +29,3 @@ HEADERS  += mainwindow.h \
     test.h
 
 FORMS    += mainwindow.ui
-
-DISTFILES += \
-    border.txt
