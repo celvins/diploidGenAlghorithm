@@ -7,14 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    newAct = new QAction(tr("&Best_fitness"), this);
-//    newAct1 = new QAction(tr("&Gen_Algorthm"), this);
-//    fileMenu1 = this->menuBar()->addMenu(tr("&Алгоритм"));
-//    fileMenu = this->menuBar()->addMenu(tr("&Графики"));
-//    fileMenu->addAction(newAct);
-//    fileMenu1->addAction(newAct1);
-//    connect(newAct, SIGNAL(triggered()), this, SLOT(newFile()));
-//    connect(newAct1, SIGNAL(triggered()), this, SLOT(show_algorithm()));
     okButton.setText(tr("OK"));
     closeButton.setText(tr("Exit"));
     QObject::connect(&okButton, SIGNAL(clicked()), this, SLOT(start()));
@@ -26,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     kol_genov_l.setText(tr("Number of genes:"));
     kol_genov.setText(tr("6"));
     stop_l.setText(tr("Sample Output"));
-    stop_e.setText(tr("-418"));
+    stop_e.setText(tr("-418.9"));
     kol_pokoleniy_l.setText(tr("Number of generations:"));
     kol_pokoleniy.setText(tr("10000"));
     p_mutation_down_l.setText(tr("The probability of mutations in the genes(%)"));
@@ -73,8 +65,14 @@ MainWindow::MainWindow(QWidget *parent) :
     file.setText("Save population");
     layout.addWidget(&file, 11, 0);
     layout.addWidget(&fileOfPopulation, 11, 1);
-    layout.addWidget(&okButton,11,3);
-    layout.addWidget(&closeButton,11,5);
+    fileBest.setText("Best file");
+    layout.addWidget(&fileBest, 12, 0);
+    layout.addWidget(&best_file, 12, 1);
+    fileBestAll.setText("Best_all file");
+    layout.addWidget(&fileBestAll, 13, 0);
+    layout.addWidget(&best_all_file, 13, 1);
+    layout.addWidget(&okButton,12,6);
+    layout.addWidget(&closeButton,12,7);
     window.setLayout(&layout);
     window.setWindowTitle(tr("Diploid genetic algorithm"));
     window.show();
@@ -89,7 +87,7 @@ void MainWindow::start(){
             p_cross_dig_down = 0, p_cross_simple_down = 0, p_cross_flat_down = 0,
             p_cross_dig_up = 0, p_cross_simple_up = 0, p_cross_flat_up = 0;
     double  koef = 0, stop = 0, epsi = 0;
-    bool flagSavePopulation = false;
+    bool flagSavePopulation = false, flagBestFile = false, flagBestAllFile = false;
     kolGenov = kol_genov.text().toInt();
     kolOsob = kol_osob.text().toInt();
     kolGener = kol_pokoleniy.text().toInt();
@@ -103,12 +101,14 @@ void MainWindow::start(){
     epsi = epsilon.text().toFloat();
     if(fileOfPopulation.isChecked())
         flagSavePopulation = true;
-    else
-        flagSavePopulation = false;
-    algorithm object_algorithm(kolGenov, kolOsob, kolGener, p_mut_down, p_mut_up, flagSavePopulation, koef, stop,
-                               p_cross_dig_down, p_cross_flat_down, p_cross_simple_down,
-                               p_cross_dig_up, p_cross_flat_up, p_cross_simple_up, epsi); //Start evolution
-    window.close();
+    if(best_file.isChecked())
+        flagBestFile = true;
+    if(best_all_file.isChecked())
+        flagBestAllFile = true;
+    flags = new Flags(kolGenov, kolOsob, kolGener, p_mut_down, p_mut_up, p_cross_dig_down,
+                      p_cross_flat_down, p_cross_simple_down,
+                      p_cross_dig_up, p_cross_flat_up, p_cross_simple_up, koef, stop, epsi, flagBestFile, flagBestAllFile, flagSavePopulation);
+    algorithm object_algorithm(flags); //Start evolution
 }
 void MainWindow::newFile() {
 

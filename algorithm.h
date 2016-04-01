@@ -10,11 +10,9 @@
 #define ALGORITHM_H
 #include "population.h"
 #include "evolution.h"
+#include "flags.h"
 #include <QMessageBox>
-
 class algorithm{
-private:
-    int number_generation;
 public:
     class errors{
     public:
@@ -22,11 +20,12 @@ public:
         double ix;
         int y;
         errors(char er[100], const double x) {str = er; ix = x;}
+        errors(char er[100], const double x, const int generate) {str = er; ix = x; y = generate;}
         errors(const double x, const int y){ix = x; this->y = y;}
     };
     algorithm();
-    algorithm(int, int, int, int, int, bool, double, double, int, int, int, int, int, int, double);
-    void start_evolution(int, int, int, int, bool, double, double, int, int, int, int, int, int, double);
+    algorithm(Flags *);
+    void start_evolution(Flags *);
     ~algorithm();
 };
 

@@ -1,46 +1,24 @@
 #include "algorithm.h"
+
 algorithm::algorithm(){
 
 }
-algorithm::algorithm(int kolGen, int kolOsob, int number_generation,
-                     int p_mut_down, int p_mut_up,  bool flag,
-                     double koeff, double stop,
-                     int p_cross_dig_down,
-                     int p_cross_flat_down, int p_cross_simple_down,
-                     int p_cross_dig_up, int p_cross_flat_up,
-                     int p_cross_simple_up, double epsi) {
-
-    this->number_generation = number_generation;
+algorithm::algorithm(Flags * flags) {
     try{
-         start_evolution(kolGen, kolOsob, p_mut_down, p_mut_up,
-                         flag, koeff, stop, p_cross_dig_down,
-                         p_cross_flat_down, p_cross_simple_down,
-                          p_cross_dig_up, p_cross_flat_up,
-                         p_cross_simple_up, epsi);
+         start_evolution(flags);
     }
      catch (errors ix) {
-           cout << endl << ix.str << " " << ix.ix << endl;
+           cout << endl << ix.str << " " << ix.ix << " " << ix.y << endl;
      }
 }
-void algorithm::start_evolution(int kolGen, int kolOsob, int p_mut_down,
-                                int p_mut_up, bool flag,
-                                double koeff, double stop,
-                                int p_cross_dig_down,
-                                int p_cross_flat_down, int p_cross_simple_down,
-                                int p_cross_dig_up, int p_cross_flat_up,
-                                int p_cross_simple_up, double epsi) {
-
-    evolution  object_evolution(p_mut_down, p_mut_up,
-                                kolGen, kolOsob, koeff, stop,
-                                p_cross_dig_down, p_cross_flat_down,
-                                p_cross_simple_down,
-                                p_cross_dig_up, p_cross_flat_up,
-                                p_cross_simple_up, epsi);
+void algorithm::start_evolution(Flags * flags) {
+    evolution  object_evolution(flags);
     cout << "Start algorithm" << endl;
-    for(int i = 0; i < number_generation; i++){
-        object_evolution.create_roulette(flag);
+    object_evolution.start = clock();
+    for(int i = 0; i < flags->kolGener; i++){
+        object_evolution.create_roulette(flags, i);
         object_evolution.crossover();
-        object_evolution.best_fitness(i);
+        object_evolution.best_fitness(flags, i);
     }
     cout << " time " << object_evolution.end - object_evolution.start;
     QMessageBox msgBox;

@@ -1,134 +1,108 @@
 #include "evolution.h"
-#include <random>
-#include <ctime>
+
 evolution::evolution(){}
-evolution::evolution(int p_mutation_down, int p_mutation_up,
-                     int kolGen, int kolOsob, double koeff, double stop,
-                     int p_cross_dig_down, int p_cross_flat_down,
-                     int p_cross_simple_down,
-                     int p_cross_dig_up, int p_cross_flat_up,
-                     int p_cross_simple_up, double epsi){
-    start = clock();
-    end = 0;
-    object_population = new population(kolOsob, kolGen);
-    this->koef = koeff;
-    this->stop_min = stop;
+evolution::evolution(Flags *flags){
+    this->flags = flags;
+    object_population = new population(flags->kolOsob, flags->kolGenov);
     object_population->generating_first_popualtion();
-    this->P_MUTATION_DOWN = p_mutation_down;
-    this->P_MUTATION_UP = p_mutation_up;
-    this->p_cross_dig_down = p_cross_dig_down; this->p_cross_dig_up = p_cross_dig_up;
-    this->p_cross_flat_down = p_cross_flat_down; this->p_cross_flat_up = p_cross_flat_up;
-    this->p_cross_simple_down = p_cross_simple_down; this->p_cross_simple_up = p_cross_simple_up;
-    this->epsi = epsi;
-    roulette = new double[kolOsob];
-    fitness = new double[kolOsob];
-    this->minimum = 2;
+    this->minimum = 2000;
 }
-void evolution::create_roulette(bool save_population_in_file){
-    if(save_population_in_file){
-        ofstream save_population("population.txt", ios::app);
-        save_population << "NEW generation" << endl;
-        for(int i = 0; i < object_population->get_kol_osob(); i++){
-            for(int j = 0; j < object_population->get_kol_genov(); j++)
-                save_population << object_population->get_osob(i, j) << " ";
+void evolution::create_roulette(Flags * flags, int generate){
+    sum_fitness = 0;
+    fitness.clear();
+    for(int i = 0; i < flags->kolOsob; i++){
+        if(flags->population_file){
+            ofstream save_population("population.txt", ios::app);
+            if(i == 0) save_population << "NEW generation" << endl;
+            for(int j = 0; j < flags->kolGenov; j++) save_population <<  object_population->get_osob(i, j) << " ";
             save_population << endl;
+            if(i == flags->kolOsob - 1) save_population << endl << endl;
+            save_population.close();
         }
-        save_population << endl << endl;
-        save_population.close();
-    }
-    roulette_sum = 0;
-    for(int i = 0; i < object_population->get_kol_osob(); i++){
-        double * ptr = object_population->get_osob(i);
-        fitness[i] = fun(ptr, object_population->get_kol_genov());
+        fitness.push_back(fun(object_population->get_osob(i)));
+        sum_fitness += fabs(fitness[i]);
+        if (fitness[i] < flags->stop){
+            end = clock();
+            cout << endl << "Time " << end - start;
+            QMessageBox msg;
+            msg.setText("End calculations");
+            msg.exec();
+            throw algorithm::errors((char *)"End calculations ", fitness[i], generate);
+        }
         if(isnan(fitness[i]))
             throw algorithm::errors((char *)"fitness ", fitness[i]);
-        roulette_sum += 1 / (fitness[i]+koef);
-        delete []ptr;
     }
-        roulette[0] = (1 / (fitness[0]+koef));
-        for(int i = 1; i < object_population->get_kol_osob(); i++)
-            roulette[i] = (roulette[i - 1] + 1 / (fitness[i]+koef));
-}
-int evolution::choice_parent(double x){
-    for(int i = 0; i < object_population->get_kol_osob(); i++){
-        if (x < roulette[i])
-           return i;
-    }
-    return 0;
+    for(int i = 0; i < flags->kolOsob; ++i) object_population->set_hp((fitness[i] / sum_fitness)*100, i);
 }
 void evolution::crossover(){
-    for(int g = 0; g < object_population->get_kol_osob(); g++){
+    for(int g = 0; g < flags->kolOsob; g++){
         int dad, mom;
-        dad = qrand() % object_population->get_kol_osob();
-        mom = qrand() % object_population->get_kol_osob();
-        double parents[4][object_population->get_kol_genov()],
-               child[4][object_population->get_kol_genov()];
-        for(int b = 0; b < object_population->get_kol_genov(); b++){
-            parents[0][b] = object_population->get_osob(dad, b, true);
-            parents[1][b] = object_population->get_osob(dad, b, false);
-            parents[2][b] = object_population->get_osob(mom, b, true);
-            parents[3][b] = object_population->get_osob(mom, b, false);
+        dad = qrand() % flags->kolOsob;
+        mom = qrand() % flags->kolOsob;
+        QVector<QVector<double> > parents, child;
+        for(int i = 0; i < 4; ++i){
+            QVector<double> a;
+            for(int b = 0; b < flags->kolGenov; b++){
+                if(i < 2){
+                    if(b + 1 % 2 != 0)
+                        a.push_back(object_population->get_osob(dad, b, true));
+                    else
+                        a.push_back(object_population->get_osob(dad, b, false));
+                }
+                else{
+                    if(b + 1 % 2 != 0)
+                        a.push_back(object_population->get_osob(mom, b, true));
+                    else
+                        a.push_back(object_population->get_osob(mom, b, false));
+                }
+            }
+            parents.push_back(a);
         }
         int crossover_variant = 0;
         int p_crossover = qrand() % 100;
-        if (p_crossover >= p_cross_flat_down && p_crossover <= p_cross_flat_up)
+        if (p_crossover >= flags->p_cross_flat_down && p_crossover <= flags->p_cross_flat_up)
             crossover_variant = 0;
-        if (p_crossover >= p_cross_dig_down && p_crossover <= p_cross_dig_up)
+        if (p_crossover >= flags->p_cross_dig_down && p_crossover <= flags->p_cross_dig_up)
             crossover_variant = 1;
-        if (p_crossover >= p_cross_simple_down && p_crossover <= p_cross_simple_up)
+        if (p_crossover >= flags->p_cross_simple_down && p_crossover <= flags->p_cross_simple_up)
             crossover_variant = 2;
         switch (crossover_variant){
         case 0:
             //Flat crossover
-            for(int i = 0; i < 4; i+=2){
-                for(int b = 0; b < object_population->get_kol_genov(); b++){
-                    if(parents[i][b] < parents[i + 1][b]){
-                        child[i][b] = (parents[i + 1][b] + qrand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
-                        child[i + 1][b] = (parents[i + 1][b] + qrand() * (parents[i][b] - parents[i + 1][b]) / (double) RAND_MAX);
-                    }
-                    else{
-                        child[i][b] = (parents[i][b] + qrand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
-                        child[i + 1][b] = (parents[i][b] + qrand() * (parents[i + 1][b] - parents[i][b]) / (double) RAND_MAX);
-                    }
-                    if(parents[i][b] == parents[i + 1][b]){
-                        child[i][b] = parents[i][b];
-                        child[i + 1][b] = parents[i][b];
-                    }
-                }
-            }
+
             break;
         case 1:
             //Discrete crossover
             for(int i = 0; i < 4; i+=2){
-                for(int b = 0; b < object_population->get_kol_genov(); b++){
+                QVector<double> a, c;
+                for(int b = 0; b < flags->kolGenov; b++){
                     int rnd = qrand() % 2;
                     if(rnd == 0){
-                        child[i][b] = parents[i][b];
-                        child[i + 1][b] = parents[i + 1][b];
+                        a.push_back(parents[i][b]);
+                        c.push_back(parents[i + 1][b]);
                     }
                     else{
-                        child[i][b] = parents[i + 1][b];
-                        child[i + 1][b] = parents[i][b];
+                        a.push_back(parents[i + 1][b]);
+                        c.push_back(parents[i][b]);
                     }
                 }
+                child.push_back(a);
+                child.push_back(c);
             }
             break;
         case 2:
             //Simple сrossover
-            int i = qrand() % (object_population->get_kol_genov());
-            for(int b = 0; b < object_population->get_kol_genov(); b++){
-                if(b < i){
-                    child[0][b] = parents[0][b];
-                    child[1][b] = parents[1][b];
-                    child[2][b] = parents[2][b];
-                    child[3][b] = parents[3][b];
+            int i = qrand() % (flags->kolGenov);
+            QVector<double> a;
+            for(int k = 0 ; k < 4; ++k){
+                for(int b = 0; b < flags->kolGenov; b++){
+                    if(b < i) a.push_back(parents[k][b]);
+                    else{
+                        if((k + 1) % 2 == 0) a.push_back(parents[k][b]); // nado podumat`
+                        else a.push_back(parents[k][b]);
+                    }
                 }
-                else{
-                    child[1][b] = parents[0][b];
-                    child[0][b] = parents[1][b];
-                    child[3][b] = parents[2][b];
-                    child[2][b] = parents[3][b];
-                }
+                child.push_back(a);
             }
             break;
         }
@@ -141,7 +115,7 @@ void evolution::crossover(){
            i_worst = dad;
         for(int i = 0; i < 4; i++){
             mutation(child[i]);
-            fitness_child[i] = fun(child[i], object_population->get_kol_genov());
+            fitness_child[i] = fun(child[i]);
         }
         if(fitness_child[0] < fitness_child[2])
             i_best1 = 0;
@@ -159,16 +133,16 @@ void evolution::crossover(){
             object_population->set_osob(child[i_best2], i_worst, true);
             object_population->set_osob(child[i_best1], i_worst, false);
         }
+        object_population->decoding_genes(i_worst);
+        object_population->limited_border(i_worst);
     }
-    object_population->decoding_genes();
-    object_population->limited_border();
 }
-void evolution::mutation(double * popul){
+void evolution::mutation(QVector<double> &popul){
     int p_mutation = qrand() % 100; //The probability of an individual gene mutation
-    if (p_mutation <= P_MUTATION_UP){
-        for (int b = 0; b < object_population->get_kol_genov(); b++){
+    if (p_mutation <= flags->p_mut_up){
+        for (int b = 0; b < flags->kolGenov; b++){
            int p_mut = qrand() % 100;
-           if (p_mut > P_MUTATION_UP) continue;
+           if (p_mut > flags->p_mut_up) continue;
            double a = (popul[b] - popul[b] * 0.25);
            double c = (popul[b] + popul[b] * 0.25);
            if (a < c) popul[b] = a + qrand() * (c - a) / (double)RAND_MAX;
@@ -176,56 +150,52 @@ void evolution::mutation(double * popul){
          }
     }
 }
-evolution::~evolution(){
-    delete object_population;
-    delete []roulette;
-    delete []fitness;
-}
-void evolution::best_fitness(int j){
-    ofstream file_best_fitness("best_fitness.txt", ios::app);
-    double min = fitness[0];
-    int i_min = 0;
-    for(int i = 1; i < object_population->get_kol_osob(); i++){
-       if(fitness[i] < min){
-           min = fitness[i];
-           i_min = i;
-           end = clock();
-       }
+void evolution::best_fitness(Flags * flags, int j){
+    int i_min;
+    if(flags->best_file){
+        double min = fitness[0];
+        i_min = 0;
+        for(int i = 1; i < flags->kolOsob; i++){
+           if(fitness[i] < min){
+               min = fitness[i];
+               i_min = i;
+               end = clock();
+           }
+        }
+        ofstream file_best_fitness("best_fitness.txt", ios::app);
+        file_best_fitness << "Best fitness in " << j << " generation " << min << endl;
+        for(int i = 0; i < flags->kolGenov; i++)
+            file_best_fitness << object_population->get_osob(i_min, i) << " ";
+        file_best_fitness << endl;
+        file_best_fitness.close();
     }
-    file_best_fitness << "Best fitness in " << j << " generation " << min << endl;
-    for(int i = 0; i < object_population->get_kol_genov(); i++)
-        file_best_fitness << object_population->get_osob(i_min, i) << " ";
-    file_best_fitness << endl;
-    file_best_fitness.close();
-    if (fitness[i_min] < minimum){
-        minimum = fitness[i_min];
-        ofstream file_best_all_generations("best_all.txt");
-        file_best_all_generations<< "Population № " << j + 1 << "\nBest of all fitness " << minimum << "\nBest individual\n";
-        for(int i = 0; i < object_population->get_kol_genov(); i++)
-            file_best_all_generations << object_population->get_osob(i_min, i) << " ";
-        file_best_all_generations.close();
-        cout << minimum << endl;
-    }
-    if (fitness[i_min] < stop_min){
-        end = clock();
-        cout << endl << "Time " << end - start << " \nGeneration " << j + 1;
-        QMessageBox msg;
-        msg.setText("End calculations");
-        msg.exec();
-        throw algorithm::errors((char *)"End calculations ", fitness[i_min]);
-    }
-    if (((j + 1) % object_population->get_kol_osob())  == 0) genocid();
-//    if ((j + 1) % 30 == 0) epsi *= 1.3;
-}
-void evolution::genocid(){
-    for (int k = 0; k < object_population->get_kol_osob(); k++){
-        for (int i = 0; i < object_population->get_kol_osob(); i++){
-            if (i == k) continue;
-            double sum = 0;
-            for (int j = 0; j < object_population->get_kol_genov(); j++)
-                sum += fabs(object_population->get_osob(k, j)) - fabs(object_population->get_osob(i, j));
-            if (fabs(sum) < epsi)
-                object_population->generating_new_population(i);
+    if(flags->best_all_file && flags->best_file){
+        if (fitness[i_min] < minimum){
+            minimum = fitness[i_min];
+            ofstream file_best_all_generations("best_all.txt");
+            file_best_all_generations<< "Population № " << j + 1 << "\nBest of all fitness " << minimum << "\nBest individual\n";
+            for(int i = 0; i < flags->kolGenov; i++)
+                file_best_all_generations << object_population->get_osob(i_min, i) << " ";
+            file_best_all_generations.close();
+            cout << minimum << endl;
         }
     }
+    if (((j + 1) % 200) == 0) genocid(false);
+    if (((j + 1) % 100) == 0) genocid(true);
+}
+void evolution::genocid(bool flag){
+    if(!flag){
+        for (int k = 0; k < flags->kolOsob; k++){
+            int i = qrand() % flags->kolOsob;
+            object_population->generating_new_population(i);
+        }
+    }
+    else{
+        for (int k = 0; k < flags->kolOsob; k++)
+            if(object_population->get_hp(k) > 5)
+                object_population->generating_new_population(k);
+    }
+}
+evolution::~evolution(){
+    delete object_population;
 }

@@ -1,7 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
-
+#include <QVector>
 #include "math.h"
-double fun(double *x, int kol);
+double fun(QVector<double>);
 
 #endif // TEST_H

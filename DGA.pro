@@ -20,12 +20,14 @@ SOURCES += main.cpp\
     population.cpp \
     evolution.cpp \
     algorithm.cpp \
-    test.cpp
+    test.cpp \
+    flags.cpp
 
 HEADERS  += mainwindow.h \
     population.h \
     evolution.h \
     algorithm.h \
-    test.h
+    test.h \
+    flags.h
 
 FORMS    += mainwindow.ui
