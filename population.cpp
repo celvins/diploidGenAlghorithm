@@ -5,7 +5,7 @@ Individual::Individual(){}
 void Individual::set_hp(double hp){this->hp = hp;}
 double Individual::get_hp(){return this->hp;}
 Individual::Individual(int kol_genov, QVector<QVector<double> > dom){
-    qsrand(random_device().operator ()());
+//    qsrand(random_device().operator ()());
     this->kol_genov = kol_genov;
     this->domination = dom;
 }
