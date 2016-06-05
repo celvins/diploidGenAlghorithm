@@ -13,13 +13,14 @@ void evolution::create_roulette(Flags * flags, int generate){
     for(int i = 0; i < flags->kolOsob; i++){
         if(flags->population_file){
             ofstream save_population("population.txt", ios::app);
-            if(i == 0) save_population << "NEW generation" << endl;
+            if(i == 0) save_population << "NEW generation " << generate << endl;
             for(int j = 0; j < flags->kolGenov; j++) save_population <<  object_population->get_osob(i, j) << " ";
             save_population << endl;
             if(i == flags->kolOsob - 1) save_population << endl << endl;
             save_population.close();
         }
-        fitness.push_back(fun(object_population->get_osob(i)));
+        fitness.push_back(fun.fun(object_population->get_osob(i)));
+//        cout << fitness[i] << endl;
         sum_fitness += fabs(fitness[i]);
         if (fitness[i] < flags->stop){
             ofstream file_result("result.txt");
@@ -152,7 +153,7 @@ void evolution::crossover(){
            i_worst = dad;
         for(int i = 0; i < 4; i++){
             mutation(child[i]);
-            fitness_child[i] = fun(child[i]);
+            fitness_child[i] = fun.fun(child[i]);
         }
         if(fitness_child[0] < fitness_child[2])
             i_best1 = 0;
@@ -171,7 +172,7 @@ void evolution::crossover(){
             object_population->set_osob(child[i_best1], i_worst, false);
         }
         object_population->decoding_genes(i_worst);
-        object_population->limited_border(i_worst);
+//        object_population->limited_border(i_worst);
     }
 }
 void evolution::mutation(QVector<double> &popul){
@@ -218,8 +219,8 @@ void evolution::best_fitness(Flags * flags, int j){
             cout << minimum << endl;
         }
     }
-    if (((j + 1) % 200) == 0) genocid(false);
-    if (((j + 1) % 100) == 0) genocid(true);
+    if (((j + 1) % 100) == 0) genocid(false);
+    if (((j + 1) % 50) == 0) genocid(true);
 }
 void evolution::genocid(bool flag){
     if(!flag){
@@ -232,6 +233,7 @@ void evolution::genocid(bool flag){
         for (int k = 0; k < flags->kolOsob; k++)
             if(object_population->get_hp(k) > flags->epsi)
                 object_population->generating_new_population(k);
+//        flags->set_mut(flags->get_mut()*1.01);
     }
 }
 evolution::~evolution(){

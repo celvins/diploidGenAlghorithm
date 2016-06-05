@@ -13,6 +13,8 @@ public:
     Flags();
     Flags(int, int, int, int, int, int, int, int,
           int, int, int, double, double, double, bool, bool, bool);
+    int get_mut(){return p_mut_up;}
+    void set_mut(int p_mut_up){this->p_mut_up = p_mut_up;}
 };
 
 #endif // FLAGS_H

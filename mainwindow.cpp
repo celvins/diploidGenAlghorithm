@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     closeButton.setText(tr("Exit"));
     QObject::connect(&okButton, SIGNAL(clicked()), this, SLOT(start()));
     QObject::connect(&closeButton, SIGNAL(clicked()), this, SLOT(quit()));
+    author.setText(tr("@Vardanyan Andranik Eduardovich, vard-94@mail.ru, 2016"));
     kol_osob_l.setText(tr("Number of individuals:"));
     kol_osob.setText(tr("20"));
     koeff_l.setText(tr("Correction factor"));
@@ -71,8 +72,9 @@ MainWindow::MainWindow(QWidget *parent) :
     fileBestAll.setText("Best_all file");
     layout.addWidget(&fileBestAll, 13, 0);
     layout.addWidget(&best_all_file, 13, 1);
-    layout.addWidget(&okButton,12,6);
-    layout.addWidget(&closeButton,12,7);
+    layout.addWidget(&okButton,12,2);
+    layout.addWidget(&closeButton,12,3);
+    layout.addWidget(&author,13, 3);
     window.setLayout(&layout);
     window.setWindowTitle(tr("Diploid genetic algorithm"));
     window.show();

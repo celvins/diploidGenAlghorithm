@@ -31,6 +31,7 @@ public:
     void set_individuals(QVector<QVector<double> >); //Генерирует начальную популяция. Аргумент диапозон возможных значений генна
     void set_zigota(QVector<double>, bool); //Устанавливает значения best_parent и bed_parent. В качестве аргумент - одномерный массив и flag true - best; false - bed
     void set_hp(double);
+    void set_genotype(QVector<QVector<double> >);
     QVector<double> get_individual_genotype(); //Возвращает одномерный массив genotype
     double get_individual_gen(int);//Возвращает значение массива genotype. В качестве аргумента принимает индекс столбца.
     double get_individual_gen(int, bool); //Возвращает значение best_parent или bed_parent в зависимости от флага

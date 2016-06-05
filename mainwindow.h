@@ -51,7 +51,7 @@ private:
     QLabel file, fileBest, fileBestAll, kol_osob_l, kol_genov_l, kol_pokoleniy_l,
             p_mutation_down_l, p_mutation_down_l_1, p_mutation_up_l,
             koeff_l, stop_l, crossover_flat_l, crossover_simple_l,
-            crossover_digital_l, crossover_l, epsilon_l;
+            crossover_digital_l, crossover_l, epsilon_l, author;
 private slots:
      void newFile(void);
      void start();

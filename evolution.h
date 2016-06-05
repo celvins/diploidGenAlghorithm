@@ -19,7 +19,7 @@
 #ifndef EVOLUTION_H
 #define EVOLUTION_H
 #include "population.h"
-#include "test.h"
+#include "fun.h"
 #include "algorithm.h"
 #include "flags.h"
 #include "omp.h"
@@ -36,6 +36,7 @@ private:
     int P_MUTATION_UP, P_MUTATION_DOWN, p_cross_dig_down, p_cross_flat_down, p_cross_simple_down,
         p_cross_dig_up, p_cross_flat_up, p_cross_simple_up;
     bool best, best_all;
+    Fun fun;
 public:
     double start, end;
     evolution();

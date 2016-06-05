@@ -9,6 +9,14 @@ Individual::Individual(int kol_genov, QVector<QVector<double> > dom){
     this->kol_genov = kol_genov;
     this->domination = dom;
 }
+////////////////////////////////////////////////
+void Individual::set_genotype(QVector<QVector<double> > border){///////////////////////////////!!!!!!!!!!!!!!!!!!!!!
+    genotype.clear();
+    for(int j = 0; j < kol_genov; j++){
+        genotype.push_back(border[j][0] * pow(10,border[j][1]) + qrand() * (border[j][2] * pow(10,border[j][3]) - border[j][0] * pow(10,border[j][1])) /(double)RAND_MAX);
+    }
+}
+/////////////////////////////////////////////////////
 void Individual::decoding_genes(bool first){
     double length1 = 0, length2 = 0;
     genotype.clear();
@@ -124,10 +132,11 @@ void population::generating_first_popualtion(){
          individual[i]->decoding_genes(true);
     }
 }
+///////////////////////////////////////
 void population::generating_new_population(int k){
-    individual[k]->set_individuals(border);
-    individual[k]->decoding_genes(true);
+    individual[k]->set_genotype(border);///////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
+//////////////////////////////////////////
 void population::decoding_genes(int i){
     individual[i]->decoding_genes(false);
 }
