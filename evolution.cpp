@@ -219,21 +219,43 @@ void evolution::best_fitness(Flags * flags, int j){
             cout << minimum << endl;
         }
     }
-    if (((j + 1) % 100) == 0) genocid(false);
-    if (((j + 1) % 50) == 0) genocid(true);
+    if (((j + 1) % 150) == 0) genocid(true);
+    if (((j + 1) % 350) == 0) genocid(false);
 }
 void evolution::genocid(bool flag){
-    if(!flag){
-        for (int k = 0; k < flags->kolOsob; k++){
-            int i = qrand() % flags->kolOsob;
-            object_population->generating_new_population(i);
+    if(flag){
+        QVector<QVector<int> > a;
+        for(int i = 0; i < flags->kolOsob; ++i){
+            a.push_back(QVector<int>());
+            a[i].push_back(i); a[i].push_back(object_population->get_hp(i));
+        }
+        for(int i = 0; i < flags->kolOsob - 1; ++i){
+            bool swap = false;
+            for(int j = 0; j < flags->kolOsob - i - 1; ++j){
+                if(a[j][1] > a[j + 1][1]){
+                    QVector<int> b;
+                    b.swap(a[j]);
+                    a[j].swap(a[j + 1]);
+                    a[j + 1].swap(b);
+                    swap = true;
+                }
+            }
+            if(!swap)
+                break;
+        }
+        for(int i = flags->kolGenov / 2; i < flags->kolOsob; ++i){
+            for(int j = 0; j < flags->kolOsob; ++j){
+                if(a[i][0] == j)
+                    object_population->generating_new_population(j);
+            }
         }
     }
     else{
-        for (int k = 0; k < flags->kolOsob; k++)
-            if(object_population->get_hp(k) > flags->epsi)
-                object_population->generating_new_population(k);
-//        flags->set_mut(flags->get_mut()*1.01);
+        for(int i = 0; i < flags->kolOsob; ++i){
+            int j = qrand() % flags->kolOsob;
+            object_population->generating_new_population(j);
+        }
+
     }
 }
 evolution::~evolution(){
